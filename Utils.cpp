@@ -18,7 +18,7 @@ int modulo (int x, int y)
   return z;
 }
 
-V2 V2::operator + (const V2 other)
+V2 V2::operator + (const V2 other) const
 {
   return V2 { x + other.x, y + other.y };
 }

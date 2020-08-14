@@ -17,7 +17,7 @@ struct V2
 {
   int x, y;
 
-  V2 operator + (const V2);
+  V2 operator + (const V2) const;
   V2 operator - (const V2);
 
   void operator += (const V2 other);
