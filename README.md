@@ -19,4 +19,4 @@ The only thing holding you back is the speed at which you are able to
 communicate to the game what you want to do.
 
 
-![demo](resources/demo.gif)
+![screeniee](resources/screenshot.png)
