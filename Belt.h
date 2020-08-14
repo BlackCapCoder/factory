@@ -5,13 +5,15 @@
 #include "Utils.h"
 #include "Entity.h"
 #include "World.h"
+#include "Item.h"
 
 class Belt : public Entity
 {
 public:
   DIR  din, dout;
-  bool cargo     = false;
   int  timeout   = 0;
+  bool cargo     = false;
+  Item item;
 
   static constexpr int cooldown = 300;
 
@@ -23,11 +25,12 @@ public:
     , dout   { dout }
   {}
 
-  bool input () override
+  bool input (Item _item) override
   {
     if (cargo) return false;
-    cargo = true;
+    cargo   = true;
     timeout = cooldown;
+    item    = _item;
     return true;
   }
 
@@ -40,7 +43,7 @@ public:
 
     if (q == nullptr) return false;
 
-    if (q->input())
+    if (q->input(item))
     {
       cargo = false;
       if (pending != nullptr)
@@ -161,13 +164,7 @@ public:
     // SDL_SetRenderDrawColor (&rend, 0, 0, 0, 255);
   }
 
-  void renderTrack (SDL_Renderer & rend, long time)
-  {
-    SDL_SetRenderDrawColor (&rend, 16, 16, 16, 255);
-    renderCargoEx (rend, 1, true, 0.3, (float)(time%cooldown)/cooldown);
-  }
-
-  void renderCargoEx (SDL_Renderer & rend, float off, bool linear, float r, float a)
+  void renderCargoEx (SDL_Renderer & rend, float off, bool linear, float r, float a, SDL_FRect & R)
   {
     const float k = r;
 
@@ -194,9 +191,6 @@ public:
       case (DIR::S): px2 = x3; py2 = y3; break;
       case (DIR::W): px2 = x4; py2 = y4; break;
     }
-
-    SDL_FRect R;
-
 
     if (!linear)
     {
@@ -227,16 +221,24 @@ public:
 
       R = { off+x, off+y, r, r };
     }
-
-    SDL_RenderFillRectF(&rend, &R);
   }
 
   void renderCargo (SDL_Renderer & rend)
   {
     if (!cargo) return;
     const float a = (float) (cooldown - timeout) / (float) cooldown;
-    SDL_SetRenderDrawColor (&rend, 128, 128, 128, 255);
-    renderCargoEx (rend, 1, false, 0.3, a);
+
+    SDL_FRect R;
+    renderCargoEx (rend, 1, false, 0.3, a, R);
+    item.render   (rend, R);
+  }
+
+  void renderTrack (SDL_Renderer & rend, long time)
+  {
+    SDL_FRect R;
+    SDL_SetRenderDrawColor (&rend, 16, 16, 16, 255);
+    renderCargoEx (rend, 1, true, 0.3, (float)(time%cooldown)/cooldown, R);
+    SDL_RenderFillRectF(&rend, &R);
   }
 };
 

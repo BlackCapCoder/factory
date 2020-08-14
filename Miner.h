@@ -24,22 +24,16 @@ struct Miner : Entity
   void tick (World & w, int dt) override
   {
     works = w.m.tile(pos.x, pos.y);
-    if (!works) return;
+    // if (!works) return;
 
     timeout -= dt;
     if (timeout > 0) return;
 
-    V2 p = pos;
+    V2 p = pos + dir2V2(dout);
 
-    switch (dout)
-    {
-      case (DIR::N): p.y--; break;
-      case (DIR::S): p.y++; break;
-      case (DIR::W): p.x--; break;
-      case (DIR::E): p.x++; break;
-    }
+    Item itm { Gray };
 
-    if (auto q = w.at(p.x, p.y); q != nullptr && q->input())
+    if (auto q = w.at(p.x, p.y); q != nullptr && q->input(itm))
       timeout = cooldown;
   }
 
@@ -54,7 +48,7 @@ struct Miner : Entity
 
     SDL_RenderFillRect (&rend, &r);
   }
-  bool input () override { return false; }
+  bool input (Item) override { return false; }
 };
 
 

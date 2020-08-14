@@ -16,11 +16,20 @@ struct Camera
 struct V2
 {
   int x, y;
+
+  V2 operator + (const V2);
+  V2 operator - (const V2);
+
+  void operator += (const V2 other);
+  void operator -= (const V2 other);
 };
 
 #define dswap(d) ((DIR) ((d+2) & 3))
 
 #define tileUnit 80
+
+
+V2 dir2V2 (DIR);
 
 
 #endif // UTILS_H

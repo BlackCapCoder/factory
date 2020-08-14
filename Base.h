@@ -1,14 +1,18 @@
 #ifndef BASE_H
 #define BASE_H
 
-#include "Utils.h"
-#include "Entity.h"
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 #include <string>
 
+#include "Utils.h"
+#include "Entity.h"
+#include "Item.h"
+
 struct Base : Entity
 {
+  Item order { Gray };
+
   Base (int x, int y)
     : Entity (V2 {x, y}, V2 {4, 4})
   {
@@ -25,7 +29,8 @@ struct Base : Entity
   void render (SDL_Renderer & rend, long time) override
   {
     SDL_Rect r = { 0, 0, size.x, size.y };
-    SDL_SetRenderDrawColor (&rend, 90, 90, 90, 255);
+    // SDL_SetRenderDrawColor (&rend, 90, 90, 90, 255);
+    SDL_SetRenderDrawColor (&rend, 64, 64, 64, 255);
     SDL_RenderFillRect (&rend, &r);
 
     static constexpr float s = 0.25;
@@ -33,9 +38,7 @@ struct Base : Entity
     // Request display
     {
       SDL_FRect rf { (1-s)/2*size.x, (1-s)*0.4*size.y, s*size.x, s*size.y };
-
-      SDL_SetRenderDrawColor (&rend, 192, 192, 192, 255);
-      SDL_RenderFillRectF (&rend, &rf);
+      order.render (rend, rf);
     }
 
     float sx, sy;
@@ -79,14 +82,17 @@ struct Base : Entity
     // SDL_DestroyTexture(texture);
   }
   int delivered = 0;
-  bool input () override {
-    delivered++;
-
-    if (hasText)
+  bool input (Item itm) override {
+    if (itm == order)
     {
-      SDL_FreeSurface(surface);
-      SDL_DestroyTexture(texture);
-      hasText = false;
+      delivered++;
+
+      if (hasText)
+      {
+        SDL_FreeSurface(surface);
+        SDL_DestroyTexture(texture);
+        hasText = false;
+      }
     }
 
     return true;

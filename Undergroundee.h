@@ -11,6 +11,7 @@ struct Undergroundee : Entity
   DIR  dir;
   bool entrance;
   bool cargo = false;
+  Item item;
   Undergroundee * other = nullptr;
 
   // Maximum underground distance
@@ -27,17 +28,9 @@ struct Undergroundee : Entity
     if (entrance) return;
     if (!cargo) return;
 
-    V2 p = pos;
+    V2 p = pos + dir2V2 (dir);
 
-    switch (dir)
-    {
-      case (DIR::N): p.y--; break;
-      case (DIR::S): p.y++; break;
-      case (DIR::W): p.x--; break;
-      case (DIR::E): p.x++; break;
-    }
-
-    if (auto q = w.at(p.x, p.y); q != nullptr && q->input())
+    if (auto q = w.at(p.x, p.y); q != nullptr && q->input(item))
     {
       cargo = false;
       return;
@@ -51,14 +44,15 @@ struct Undergroundee : Entity
     SDL_SetRenderDrawColor (&rend, 64, 64, 16, 255);
     SDL_RenderFillRect (&rend, &r);
   }
-  bool input () override {
+  bool input (Item itm) override {
     if (entrance)
     {
       if (other == nullptr) return false;
-      return other->input();
+      return other->input(itm);
     } else {
       if (cargo) return false;
       cargo = true;
+      item  = itm;
       return true;
     }
   }

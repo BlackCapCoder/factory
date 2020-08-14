@@ -26,6 +26,7 @@ struct Splitter : public Entity
   Priority opri = Priority::Alternate;
   int buffer    = 0;
   bool state    = false;
+  Item item;
 
 
   Splitter (int x, int y, DIR dout)
@@ -80,10 +81,11 @@ struct Splitter : public Entity
     return r;
   }
 
-  bool input () override
+  bool input (Item itm) override
   {
     if (buffer >= 2) return false;
     buffer++;
+    item = itm;
     return true;
   }
 
@@ -134,7 +136,7 @@ struct Splitter : public Entity
 
     auto e = w.at (p1.x, p1.y);
 
-    if (e != nullptr && e->input())
+    if (e != nullptr && e->input(item))
       { buffer--; state = !state; timeout = cooldown; }
 
     if (buffer == 0) return;
@@ -142,73 +144,9 @@ struct Splitter : public Entity
     e = w.at(p2.x, p2.y);
 
     if (opri == Priority::Alternate || buffer > 1)
-    if (e != nullptr && e->input())
+    if (e != nullptr && e->input(item))
       {buffer--; state = !state; timeout = cooldown; }
   }
-
-  /*
-  void swap (Belt * a, Belt * b)
-  {
-    const auto tmp = a->timeout;
-    a->timeout = b->timeout;
-    b->timeout = tmp;
-    a->cargo   = !a->cargo;
-    b->cargo   = !b->cargo;
-  }
-  void tick (World & w, int dt) override
-  {
-    if (timeout > 0) { timeout -= dt; return; }
-    timeout = 0;
-
-    V2 p1 = pos;
-    V2 p2 = pos2();
-
-    auto left = w.bs.at(p1.x, p1.y);
-    if (left == nullptr) return;
-
-    auto right = w.bs.at(p2.x, p2.y);
-    if (right == nullptr) return;
-
-    if (left->cargo == right->cargo) return;
-
-    // We always attempt to move to the left
-    if ((opri == Alternate && state) || opri == Right)
-    {
-      auto tmp = left;
-      left     = right;
-      right    = tmp;
-    }
-
-    // Case 1: Left already has the cargo
-    if (left->cargo && left->timeout == Belt::cooldown)
-    {
-      // std::cout << "Case 1: " << dt << ", " << left->timeout << std::endl;
-      state = !state;
-      timeout = cooldown;
-      return;
-    }
-    else
-
-    // Case 2: Right has cargo- snag it
-    if (right->cargo && right->timeout == Belt::cooldown)
-    {
-      // std::cout << "Case 2: " << dt << ", " << right->timeout << std::endl;
-      state = !state;
-      swap (left, right);
-      timeout = cooldown;
-      return;
-    }
-
-    // Case 3: One belt is backed up- swap for throughput
-    if ((left->cargo && left->timeout <= 0) || (right->cargo && right->timeout <= 0))
-    {
-      // std::cout << "Case 3" << std::endl;
-      swap (left, right);
-      timeout = cooldown;
-      return;
-    }
-  }
-  */
 };
 
 

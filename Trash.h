@@ -13,9 +13,6 @@ struct Trash : public Entity
 
   void tick (World & w, int dt) override
   {
-    // auto e = w.bs.at(pos.x, pos.y);
-    // if (e == nullptr) return;
-    // e->cargo = false;
   }
 
   void render (SDL_Renderer & rend, long time) override
@@ -24,7 +21,7 @@ struct Trash : public Entity
     SDL_SetRenderDrawColor (&rend, 128, 0, 0, 255);
     SDL_RenderFillRect (&rend, &r);
   }
-  bool input () override { return true; }
+  bool input (Item) override { return true; }
 };
 
 #endif // TRASH_H

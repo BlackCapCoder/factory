@@ -163,14 +163,8 @@ struct BeltInsert
 
     }
 
-    switch (d)
-    {
-      case (DIR::N): g.cur.y--; g.keepCursorInFrame (); break;
-      case (DIR::S): g.cur.y++; g.keepCursorInFrame (); break;
-      case (DIR::W): g.cur.x--; g.keepCursorInFrame (); break;
-      case (DIR::E): g.cur.x++; g.keepCursorInFrame (); break;
-    }
-
+    g.cur += dir2V2(d);
+    g.keepCursorInFrame ();
 
     if (isUnder) return;
 

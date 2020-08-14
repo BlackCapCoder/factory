@@ -1,11 +1,13 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include "Utils.h"
 #include <vector>
 #include <set>
 #include <SDL2/SDL.h>
+
+#include "Utils.h"
 #include "QuadTree.h"
+#include "Item.h"
 
 
 class World;
@@ -29,7 +31,7 @@ struct Entity : public Collidable<Entity>
   virtual void tick   (World & w, int dt) = 0;
 
   // attempt to insert an item into this entity
-  virtual bool input  () = 0;
+  virtual bool input (Item) = 0;
 };
 
 template <class E>
