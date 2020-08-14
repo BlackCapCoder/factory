@@ -11,6 +11,13 @@ V2 dir2V2 (DIR d)
   }
 }
 
+int modulo (int x, int y)
+{
+  int z = x % y;
+  if (z < 0) z = y - z;
+  return z;
+}
+
 V2 V2::operator + (const V2 other)
 {
   return V2 { x + other.x, y + other.y };

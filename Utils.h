@@ -29,7 +29,8 @@ struct V2
 #define tileUnit 80
 
 
-V2 dir2V2 (DIR);
+V2  dir2V2 (DIR);
+int modulo (int x, int y);
 
 
 #endif // UTILS_H

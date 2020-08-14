@@ -3,12 +3,18 @@
 
 #include <bitset>
 #include <random>
+#include "Item.h"
+#include "Utils.h"
 
 struct WorldMap
 {
   static constexpr int w = 1024;
   static constexpr int p = 13;
   std::bitset<w*w> buf;
+
+  const int xmod = std::rand();
+  const int ymod = std::rand();
+  const int zmod = std::rand();
 
   WorldMap ()
   {
@@ -27,6 +33,21 @@ struct WorldMap
     if (x < 0) x = w - x;
     if (y < 0) y = w - y;
     return bit (x, y);
+  }
+  Item resource (int x, int y)
+  {
+    x >>= 6; y >>= 6;
+    x ^= xmod; y ^= ymod;
+
+    int c = (x^y) ^ zmod;
+
+    switch (c & 3)
+    {
+      case 0: return Item { Gray  };
+      case 1: return Item { Red   };
+      case 2: return Item { Green };
+      case 3: return Item { Blue  };
+    }
   }
 
   bool bit (int x, int y)

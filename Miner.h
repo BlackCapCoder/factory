@@ -24,14 +24,14 @@ struct Miner : Entity
   void tick (World & w, int dt) override
   {
     works = w.m.tile(pos.x, pos.y);
-    // if (!works) return;
+    if (!works) return;
 
     timeout -= dt;
     if (timeout > 0) return;
 
     V2 p = pos + dir2V2(dout);
 
-    Item itm { Gray };
+    const Item itm = w.m.resource(pos.x, pos.y);
 
     if (auto q = w.at(p.x, p.y); q != nullptr && q->input(itm))
       timeout = cooldown;

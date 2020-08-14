@@ -81,7 +81,7 @@ public:
       {
         SDL_RenderSetScale(&rend, u * cam.z, u * cam.z);
 
-        SDL_Rect r = { 0, 0, 1, 1 };
+        SDL_FRect r = { 0, 0, 1, 1 };
         SDL_SetRenderDrawColor (&rend, 32, 16, 32, 255);
 
         int w = WorldMap::w;
@@ -91,7 +91,8 @@ public:
             if (world.m.tile(x+cx,y+cy))
             {
               r.x = x; r.y = y;
-              SDL_RenderFillRect (&rend, &r);
+              world.m.resource(x+cx, y+cy).render (rend, r);
+              // SDL_RenderFillRect (&rend, &r);
             }
 
         SDL_RenderSetScale(&rend, 1, 1);
