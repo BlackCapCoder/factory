@@ -18,3 +18,5 @@ There is nothing to be unlocked or upgraded, and buildings cost nothing.
 The only thing holding you back is the speed at which you are able to
 communicate to the game what you want to do.
 
+
+![demo](resources/demo.gif)
