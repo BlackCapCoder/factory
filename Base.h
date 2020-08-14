@@ -9,14 +9,32 @@
 #include "Entity.h"
 #include "Item.h"
 
+struct Order
+{
+  Item item;
+  int  amount;
+};
+
 struct Base : Entity
 {
-  Item order { Gray };
+  int level     = 0;
+  int delivered = 0;
 
   Base (int x, int y)
     : Entity (V2 {x, y}, V2 {4, 4})
   {
     loadFont ();
+  }
+
+  Order getOrder ()
+  {
+    switch (level)
+    {
+      case 0:  return Order { Item {Gray},  200     };
+      case 1:  return Order { Item {Red},   500     };
+      case 2:  return Order { Item {Blue},  1000    };
+      default: return Order { Item {Gray},  10*1000 };
+    }
   }
 
   void tick (World & w, int dt) override
@@ -38,7 +56,7 @@ struct Base : Entity
     // Request display
     {
       SDL_FRect rf { (1-s)/2*size.x, (1-s)*0.4*size.y, s*size.x, s*size.y };
-      order.render (rend, rf);
+      getOrder().item.render (rend, rf);
     }
 
     float sx, sy;
@@ -49,7 +67,7 @@ struct Base : Entity
     if (!hasText)
     {
       char str[32];
-      std::sprintf(str, "%u/%u", delivered, 1000);
+      std::sprintf(str, "%u/%u", delivered, getOrder().amount);
       setText (rend, str);
       hasText = true;
     }
@@ -81,11 +99,15 @@ struct Base : Entity
     // SDL_FreeSurface(surface);
     // SDL_DestroyTexture(texture);
   }
-  int delivered = 0;
+
   bool input (Item itm) override {
-    if (itm == order)
+    if (itm == getOrder().item)
     {
-      delivered++;
+      if (++delivered >= getOrder().amount)
+      {
+        level++;
+        delivered = 0;
+      }
 
       if (hasText)
       {
