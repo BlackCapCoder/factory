@@ -2,10 +2,11 @@
 #include "World.h"
 #include "Utils.h"
 #include "Belt.h"
+#include "Miner.h"
 #include "Undergroundee.h"
 
 
-void EntityGraph::update (World & w)
+void EntityGraph::update ()
 {
   m.clear();
 
@@ -47,5 +48,22 @@ void EntityGraph::update (World & w)
 
     m[b1] = b2;
   }
+}
+
+void EntityGraph::updateAt (int x, int y, int w, int h)
+{
+  std::vector<Entity*> es {};
+  this->w.inside(x,y,w,h,es);
+  for (auto e : es)
+    if (auto q = dynamic_cast<Belt*>(e))
+    {
+      V2 p = q->pos + dir2V2(q->dout);
+      m[e] = this->w.at (p.x, p.y);
+    }
+}
+
+void EntityGraph::updateAround (Entity * e)
+{
+  updateAt (e->pos.x-1, e->pos.y-1, e->size.x+2, e->size.y+2);
 }
 

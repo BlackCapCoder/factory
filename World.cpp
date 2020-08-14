@@ -8,9 +8,9 @@
 #include "Base.h"
 
 
-void World::add (Entity        * e) { es.add(e); qt.insert (e); }
-void World::add (Belt          * e) { bs.add(e); qt.insert (e); }
-void World::add (Undergroundee * e) { us.add(e); qt.insert (e); }
+void World::add (Entity        * e) { es.add(e); qt.insert (e); gr.updateAround (e); }
+void World::add (Belt          * e) { bs.add(e); qt.insert (e); gr.updateAround (e); }
+void World::add (Undergroundee * e) { us.add(e); qt.insert (e); gr.updateAround (e); }
 
 void World::cleanAdd (Entity * e)
 {
@@ -32,6 +32,7 @@ void World::cleanAdd (Entity * e)
 void World::remove (Belt * e) {
   // std::cout << "removing belt" << std::endl;
   qt.remove (e);
+  gr.updateAround (e);
   bs.remove (e);
 }
 void World::remove (Entity * e) {
@@ -47,6 +48,7 @@ void World::remove (Entity * e) {
   {
     // std::cout << "removing entity" << std::endl;
     qt.remove (e);
+    gr.updateAround (e);
     es.remove (e);
   }
 }
@@ -54,9 +56,12 @@ void World::remove (Undergroundee * e) {
   std::cout << "removing undergroundee" << std::endl;
 
   qt.remove (e);
+  gr.updateAround (e);
+
   if (e->other != nullptr)
   {
     qt.remove (e->other);
+    gr.updateAround (e->other);
     // us.remove (e->other);
   }
   // us.remove(e);
@@ -64,7 +69,7 @@ void World::remove (Undergroundee * e) {
 
 void World::tick (int dt)
 {
-  gr.update(*this);
+  // gr.update();
   for (Belt     * e : bs) e->tick (*this, dt);
   for (Entity   * e : es) e->tick (*this, dt);
   for (auto     * e : us) e->tick (*this, dt);

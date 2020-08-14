@@ -21,7 +21,7 @@ struct World
   EntityList<Entity>        es;
   EntityList<Undergroundee> us;
 
-  EntityGraph               gr;
+  EntityGraph               gr {*this};
   Base *                  base;
   WorldMap                 m  {};
   QuadTree<Entity>         qt {V4{-1024,-1024,2048,2048},30,20};
