@@ -36,10 +36,10 @@ int main (int argc, const char * argv[])
     g.km.map('n', "k", [&](){ g.cur.y--; g.keepCursorInFrame(); held_x(); });
     g.km.map('n', "j", [&](){ g.cur.y++; g.keepCursorInFrame(); held_x(); });
 
-    g.km.nmap ("y", "kh");
-    g.km.nmap ("u", "kl");
-    g.km.nmap ("b", "jh");
-    g.km.nmap ("n", "jl");
+    // g.km.nmap ("y", "kh");
+    // g.km.nmap ("u", "kl");
+    // g.km.nmap ("b", "jh");
+    // g.km.nmap ("n", "jl");
 
     // Camera Movement
     g.km.map('n', "H", [&g](){ g.cam.x--; g.moveCursorIntoFrame(); });
@@ -47,10 +47,10 @@ int main (int argc, const char * argv[])
     g.km.map('n', "K", [&g](){ g.cam.y--; g.moveCursorIntoFrame(); });
     g.km.map('n', "J", [&g](){ g.cam.y++; g.moveCursorIntoFrame(); });
 
-    g.km.nmap ("Y", "KH");
-    g.km.nmap ("U", "KL");
-    g.km.nmap ("B", "JH");
-    g.km.nmap ("N", "JL");
+    // g.km.nmap ("Y", "KH");
+    // g.km.nmap ("U", "KL");
+    // g.km.nmap ("B", "JH");
+    // g.km.nmap ("N", "JL");
 
     g.km.map('n', "zh", [&g](){ g.scrolloff(g.cur.x, g.cur.y, DIR::W); });
     g.km.map('n', "zl", [&g](){ g.scrolloff(g.cur.x, g.cur.y, DIR::E); });
@@ -110,7 +110,7 @@ int main (int argc, const char * argv[])
         }
       g.keepCursorInFrame();
     });
-    g.km.map('n', "<c-w>", [&g](){
+    g.km.map('n', "b", [&g](){
       if (auto p = dynamic_cast<Belt*>(g.world.at (g.cur.x, g.cur.y)))
         while (auto b = dynamic_cast<Belt*>(g.world.at(g.cur + dir2V2(p->din))))
         {
@@ -121,6 +121,34 @@ int main (int argc, const char * argv[])
         }
       g.keepCursorInFrame();
     });
+
+    g.km.map('n', "0", [&g](){
+      V2 first { g.cur.x, g.cur.y };
+
+      if (auto p = dynamic_cast<Belt*>(g.world.at (g.cur.x, g.cur.y)))
+        while (auto b = dynamic_cast<Belt*>(g.world.at(g.cur + dir2V2(p->din))))
+        {
+          if (p->din != dswap(b->dout)) break;
+          g.cur += dir2V2 (p->din);
+          if (g.cur.x == first.x && g.cur.y == first.y) break;
+          p = b;
+        }
+      g.keepCursorInFrame();
+    });
+    g.km.map('n', "$", [&g](){
+      V2 first { g.cur.x, g.cur.y };
+
+      if (auto p = dynamic_cast<Belt*>(g.world.at (g.cur.x, g.cur.y)))
+        while (auto b = dynamic_cast<Belt*>(g.world.at(g.cur + dir2V2(p->dout))))
+        {
+          if (p->dout != dswap(b->din)) break;
+          g.cur += dir2V2 (p->dout);
+          if (g.cur.x == first.x && g.cur.y == first.y) break;
+          p = b;
+        }
+      g.keepCursorInFrame();
+    });
+
 
     beltInsert (g);
   }
