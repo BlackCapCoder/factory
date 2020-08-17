@@ -58,12 +58,22 @@ struct KeySTM : KeyMap
     if (k.mod & KMOD_CTRL)
       k.mod = (SDL_Keymod) (k.mod|KMOD_CTRL);
 
+
     // std::cout << k.toString() << "\t" << k.toUL() << std::endl;
 
     auto ptr = sm.find(k.toUL());
     if (ptr == std::end(sm))
     {
+
+      if ( k.sym == SDLK_LSHIFT || k.sym == SDLK_RSHIFT
+        || k.sym == SDLK_LCTRL  || k.sym == SDLK_RCTRL
+        || k.sym == SDLK_LALT   || k.sym == SDLK_RALT
+        || k.sym == SDLK_LGUI   || k.sym == SDLK_RGUI
+         )
+        return;
+
       // std::cout << k.toString() << " not bound" << std::endl;
+
       sm = fallback;
       return;
     }

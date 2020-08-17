@@ -2,6 +2,7 @@
 #include "BeltInsert.h"
 #include "Miner.h"
 #include "Base.h"
+#include "motion.h"
 #include <random>
 #include <SDL2/SDL_mixer.h>
 
@@ -76,6 +77,13 @@ int main (int argc, const char * argv[])
     g.km.map('n', "-", [&g](){ g.zoomOut (); });
     g.km.map('n', "+", [&g](){ g.zoomIn  (); });
 
+    g.km.map('n', "gz", [&g](){
+      if (g.cam.z > g.ZOOM_MIN)
+        g.zoomEnd ();
+      else
+        g.zoomReset ();
+    });
+
     // Centering
     g.km.map('n', "zz", [&g](){
       g.cam.x = g.cur.x;
@@ -99,55 +107,55 @@ int main (int argc, const char * argv[])
 
     // --------- Motion
 
+
     g.km.map('n', "w", [&g](){
-      if (auto p = dynamic_cast<Belt*>(g.world.at (g.cur.x, g.cur.y)))
-        while (auto b = dynamic_cast<Belt*>(g.world.at(g.cur + dir2V2(p->dout))))
-        {
-          if (p->dout != dswap(b->din)) break;
-          g.cur += dir2V2 (p->dout);
-          if (p->dout != b->dout) break;
-          p = b;
-        }
-      g.keepCursorInFrame();
+      Verb::warp (g, Motion::Word);
     });
     g.km.map('n', "b", [&g](){
-      if (auto p = dynamic_cast<Belt*>(g.world.at (g.cur.x, g.cur.y)))
-        while (auto b = dynamic_cast<Belt*>(g.world.at(g.cur + dir2V2(p->din))))
-        {
-          if (p->din != dswap(b->dout)) break;
-          g.cur += dir2V2 (p->din);
-          if (p->din != b->din) break;
-          p = b;
-        }
-      g.keepCursorInFrame();
+      Verb::warp (g, Motion::Back);
     });
-
     g.km.map('n', "0", [&g](){
-      V2 first { g.cur.x, g.cur.y };
-
-      if (auto p = dynamic_cast<Belt*>(g.world.at (g.cur.x, g.cur.y)))
-        while (auto b = dynamic_cast<Belt*>(g.world.at(g.cur + dir2V2(p->din))))
-        {
-          if (p->din != dswap(b->dout)) break;
-          g.cur += dir2V2 (p->din);
-          if (g.cur.x == first.x && g.cur.y == first.y) break;
-          p = b;
-        }
-      g.keepCursorInFrame();
+      Verb::warp (g, Motion::Home);
     });
     g.km.map('n', "$", [&g](){
-      V2 first { g.cur.x, g.cur.y };
-
-      if (auto p = dynamic_cast<Belt*>(g.world.at (g.cur.x, g.cur.y)))
-        while (auto b = dynamic_cast<Belt*>(g.world.at(g.cur + dir2V2(p->dout))))
-        {
-          if (p->dout != dswap(b->din)) break;
-          g.cur += dir2V2 (p->dout);
-          if (g.cur.x == first.x && g.cur.y == first.y) break;
-          p = b;
-        }
-      g.keepCursorInFrame();
+      Verb::warp (g, Motion::End);
     });
+
+
+    g.km.map('n', "dw", [&g](){
+      Verb::_Delete (g, Motion::Word);
+    });
+    g.km.map('n', "db", [&g](){
+      Verb::_Delete (g, Motion::Back);
+    });
+    g.km.map('n', "d0", [&g](){
+      Verb::Delete0 (g, Motion::Home);
+    });
+    g.km.map('n', "d$", [&g](){
+      Verb::Delete0 (g, Motion::End);
+    });
+    g.km.map('n', "dd", [&g](){
+      Verb::Delete0 (g, Motion::Line);
+    });
+    g.km.nmap ("D", "d$");
+
+
+    g.km.map('n', "cw", [&g](){
+      Verb::change (g, Motion::Word);
+    });
+    g.km.map('n', "cb", [&g](){
+      Verb::change (g, Motion::Back);
+    });
+    g.km.map('n', "c0", [&g](){
+      Verb::change (g, Motion::Home);
+    });
+    g.km.map('n', "c$", [&g](){
+      Verb::change (g, Motion::End);
+    });
+    g.km.map('n', "cc", [&g](){
+      Verb::change (g, Motion::Line);
+    });
+    g.km.nmap ("C", "c$");
 
 
     beltInsert (g);

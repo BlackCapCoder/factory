@@ -284,6 +284,16 @@ public:
     zoom--;
     updateZoom ();
   }
+  void zoomEnd ()
+  {
+    zoom = ZOOM * -1;
+    updateZoom ();
+  }
+  void zoomReset ()
+  {
+    zoom = 0;
+    updateZoom ();
+  }
 
 private:
   void updateZoom ()
