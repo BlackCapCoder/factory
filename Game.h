@@ -2,10 +2,9 @@
 #define GAME_H
 
 #include <iostream>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL2_gfxPrimitives.h>
 #include <chrono>
 #include <thread>
+#include <SDL2/SDL_opengl.h>
 
 #include "Utils.h"
 #include "Key.h"
@@ -57,6 +56,18 @@ public:
 
   const float u  = 80;
 
+  void transform (float a, float b, float c, float d, float e, float f)
+  {
+    float mat[16]
+      { a, c, e, 0
+      , b, d, f, 0
+      , 0, 0, 1, 0
+      , 0, 0, 0, 1
+      };
+
+    glLoadMatrixf (mat);
+  }
+
   void render ()
   {
     dirty = false;
@@ -84,15 +95,17 @@ public:
         SDL_FRect r = { 0, 0, 1, 1 };
         SDL_SetRenderDrawColor (&rend, 32, 16, 32, 255);
 
+        const int ox = ceil (cx);
+        const int oy = ceil (cy);
+
         int w = WorldMap::w;
 
         for (int y = 0; y < sh; y++)
           for (int x = 0; x < sw; x++)
-            if (world.m.tile(x+cx,y+cy))
+            if (world.m.tile(x+ox,y+oy))
             {
               r.x = x; r.y = y;
-              world.m.resource(x+cx, y+cy).render (rend, r);
-              // SDL_RenderFillRect (&rend, &r);
+              world.m.resource(x+ox, y+oy).render (rend, r);
             }
 
         SDL_RenderSetScale(&rend, 1, 1);
@@ -222,6 +235,7 @@ public:
   void keepCursorInFrame ()
   {
     keepInFrame(cur.x, cur.y);
+    std::cout << cam.x << ", " << cam.y << std::endl;
   }
 
   // Move the cursor, bringing it into frame
