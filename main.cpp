@@ -73,16 +73,8 @@ int main (int argc, const char * argv[])
     });
 
     // Camera Zoom
-    g.km.map('n', "-", [&g](){
-      if (g.cam.z <= 0.1) return;
-      g.cam.z *= 0.75;
-    });
-
-    g.km.map('n', "+", [&g](){
-      if (g.cam.z >= 2) return;
-      g.cam.z *= 1.25;
-      g.keepCursorInFrame();
-    });
+    g.km.map('n', "-", [&g](){ g.zoomOut (); });
+    g.km.map('n', "+", [&g](){ g.zoomIn  (); });
 
     // Centering
     g.km.map('n', "zz", [&g](){

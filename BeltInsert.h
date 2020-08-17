@@ -28,18 +28,22 @@ struct BeltInsert
   void up    () {
     if (!reverse) move (DIR::N); else
     { g.cur.y--; move (DIR::S); g.cur.y--; }
+    g.keepCursorInFrame ();
   }
   void down  () {
     if (!reverse) move (DIR::S); else
     { g.cur.y++; move (DIR::N); g.cur.y++; }
+    g.keepCursorInFrame ();
   }
   void left  () {
     if (!reverse) move (DIR::W); else
     { g.cur.x--; move (DIR::E); g.cur.x--; }
+    g.keepCursorInFrame ();
   }
   void right () {
     if (!reverse) move (DIR::E); else
     { g.cur.x++; move (DIR::W); g.cur.x++; }
+    g.keepCursorInFrame ();
   }
 
   // ----------- Diagonal movement
@@ -52,53 +56,126 @@ struct BeltInsert
   //   1) Choose the option that leaves 'face' unchanged if there is one.
   //   2) Choose the option for which the first move is NOT the opposite of 'face'
 
+  // void NW () {
+  //   switch (face)
+  //   {
+  //     case (DIR::N):
+  //     case (DIR::S):
+  //       left (); up (); break;
+  //     case (DIR::W):
+  //     case (DIR::E):
+  //       up (); left (); break;
+  //   }
+  // }
+
+  // void NE () {
+  //   switch (face)
+  //   {
+  //     case (DIR::N):
+  //     case (DIR::S):
+  //       right (); up (); break;
+  //     case (DIR::E):
+  //     case (DIR::W):
+  //       up (); right (); break;
+  //   }
+  // }
+  //
+  // void SW () {
+  //   switch (face)
+  //   {
+  //     case (DIR::S):
+  //     case (DIR::N):
+  //       left (); down (); break;
+  //     case (DIR::W):
+  //     case (DIR::E):
+  //       down (); left (); break;
+  //   }
+  // }
+  //
+  // void SE () {
+  //   switch (face)
+  //   {
+  //     case (DIR::S):
+  //     case (DIR::N):
+  //       right (); down (); break;
+  //     case (DIR::E):
+  //     case (DIR::W):
+  //       down (); right (); break;
+  //   }
+  // }
+
+
+  // The scheme above have problems with corners.
+  // Suppose the user is placing belts along a wall like this:
+  //
+  //    v|
+  //    v|
+  //    v|
+  //    v+-------
+  //
+  // 'face' is south, so by rule 1 we move east first, then south,
+  // which moves into the wall.
+  //
+  // Corners are quite common, so this is going to become annoying.
+  //
+  // ---- Scheme #2
+  //
+  // 1) If possible, the first move should be in direction 'face'.
+  //    In this case 'face' should remain unchanged after both moves.
+  //    (to make the behavior of holding a key down consistent)
+  //
+  //  2) Otherwise, choose the option that does begin with a move
+  //     in the direction opposite to 'face'.
+
   void NW () {
+    const DIR orig = face;
+    if (reverse) face = dswap (face);
+
     switch (face)
     {
-      case (DIR::N):
-      case (DIR::S):
-        left (); up (); break;
-      case (DIR::W):
-      case (DIR::E):
-        up (); left (); break;
+      case (DIR::N): up   (); left (); face = orig; break;
+      case (DIR::E): up   (); left (); break;
+      case (DIR::W): left (); up   (); face = orig; break;
+      case (DIR::S): left (); up   (); break;
     }
   }
-
   void NE () {
+    const DIR orig = face;
+    if (reverse) face = dswap (face);
+
     switch (face)
     {
-      case (DIR::N):
-      case (DIR::S):
-        right (); up (); break;
-      case (DIR::E):
-      case (DIR::W):
-        up (); right (); break;
+      case (DIR::N): up (); right (); face = orig; break;
+      case (DIR::W): up (); right (); break;
+      case (DIR::E): right (); up (); face = orig; break;
+      case (DIR::S): right (); up (); break;
     }
   }
-
   void SW () {
+    const DIR orig = face;
+    if (reverse) face = dswap (face);
+
     switch (face)
     {
-      case (DIR::S):
-      case (DIR::N):
-        left (); down (); break;
-      case (DIR::W):
-      case (DIR::E):
-        down (); left (); break;
+      case (DIR::S): down (); left (); face = orig; break;
+      case (DIR::E): down (); left (); break;
+      case (DIR::W): left (); down (); face = orig; break;
+      case (DIR::N): left (); down (); break;
+    }
+  }
+  void SE () {
+    const DIR orig = face;
+    if (reverse) face = dswap (face);
+
+    switch (face)
+    {
+      case (DIR::S): down (); right (); face = orig; break;
+      case (DIR::W): down (); right (); break;
+      case (DIR::E): right (); down (); face = orig; break;
+      case (DIR::N): right (); down (); break;
     }
   }
 
-  void SE () {
-    switch (face)
-    {
-      case (DIR::S):
-      case (DIR::N):
-        right (); down (); break;
-      case (DIR::E):
-      case (DIR::W):
-        down (); right (); break;
-    }
-  }
 
   // -----------
 
@@ -189,6 +266,7 @@ struct BeltInsert
       {
         b->din  = d1;
         b->dout = d2;
+        g.world.gr.updateAround (q);
       }
       else
       {
@@ -226,7 +304,6 @@ struct BeltInsert
     }
 
     g.cur += dir2V2(d);
-    g.keepCursorInFrame ();
 
     if (isUnder) return;
 
@@ -263,18 +340,25 @@ struct BeltInsert
     }
 
     if (auto q = dynamic_cast<Miner*>(g.world.es.at (p1.x, p1.y)))
+    {
       q->dout = d;
+      g.world.gr.updateAround (q);
+    }
     else
     if (auto q = g.world.bs.at (p1.x, p1.y))
     {
       q->dout = d;
+      g.world.gr.updateAround (q);
     }
     else
       placeBelt (p1.x, p1.y, dswap(d1), d2);
 
 
     if (auto q = g.world.bs.at (p2.x, p2.y))
+    {
       q->din = dswap (d2);
+      g.world.gr.updateAround (q);
+    }
     else
     {
       if (auto q = g.world.es.at (p2.x, p2.y))

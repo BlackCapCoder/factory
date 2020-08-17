@@ -172,42 +172,42 @@ public:
 
   // Move the camera such that the given point is at least
   // 'off' tiles away from all screen edges
-  void keepInFrame (int px, int py, int off)
+  void keepInFrame (int px, int py)
   {
+    const auto off = _scrolloff;
     const auto _w = ws.w/(u*cam.z);
     const auto _h = ws.h/(u*cam.z);
     const auto dx = _w/2;
     const auto dy = _h/2;
     const auto x  = cam.x - dx + 0.5;
     const auto y  = cam.y - dy + 0.5;
-    const auto ow = off;
-    const auto oh = off;
+    const auto ow = dx >= off ? off : dx;
+    const auto oh = dy >= off ? off : dy;
 
-    if (px < x + ow)
+    if (px < x + ow) // E
       cam.x = px + dx - ow;
+    else if (px >= x + _w - ow - 1) // W
+      cam.x = px - dx + ow;
 
-    if (py < y + oh)
+    if (py < y + oh) // N
       cam.y = py + dy - oh;
-
-    if (px >= x + _w - ow - 1)
-      cam.x = px - dx + ow + 1;
-
-    if (py >= y + _h - oh - 1)
-      cam.y = py - dy + oh + 1;
+    else if (py >= y + _h - oh - 1) // S
+      cam.y = py - dy + oh;
   }
 
   // Move the camera such that the given point is exactly 'off'
   // tiles away from the 'dir' screen edge
-  void scrolloff (int px, int py, DIR dir, int off = 4)
+  void scrolloff (int px, int py, DIR dir)
   {
+    const auto off = _scrolloff;
     const auto _w = ws.w/(u*cam.z);
     const auto _h = ws.h/(u*cam.z);
     const auto dx = _w/2;
     const auto dy = _h/2;
     const auto x  = cam.x - dx + 0.5;
     const auto y  = cam.y - dy + 0.5;
-    const auto ow = off;
-    const auto oh = off;
+    const auto ow = dx >= off ? off : dx;
+    const auto oh = dy >= off ? off : dy;
 
     switch (dir)
     {
@@ -219,37 +219,38 @@ public:
   }
 
   // Move the camera to keep the cursor in frame
-  void keepCursorInFrame (int off = 4)
+  void keepCursorInFrame ()
   {
-    keepInFrame(cur.x, cur.y, off);
+    keepInFrame(cur.x, cur.y);
   }
 
   // Move the cursor, bringing it into frame
-  void moveCursorIntoFrame (int off = 4)
+  void moveCursorIntoFrame ()
   {
+    const auto off = _scrolloff;
     const auto _w = ws.w/(u*cam.z);
     const auto _h = ws.h/(u*cam.z);
     const auto dx = _w/2;
     const auto dy = _h/2;
     const auto x  = cam.x - dx + 0.5;
     const auto y  = cam.y - dy + 0.5;
-    const auto ow = off;
-    const auto oh = off;
+    const auto ow = dx >= off ? off : dx;
+    const auto oh = dy >= off ? off : dy;
 
     const auto px = cur.x;
     const auto py = cur.y;
 
     if (px < x + ow)
       cur.x = x + ow;
+    else
+    if (px >= x + _w - ow - 1)
+      cur.x = x + _w - ow;
 
     if (py < y + oh)
       cur.y = y + oh;
-
-    if (px >= x + _w - ow - 1)
-      cur.x = x + _w - ow - 2;
-
+    else
     if (py >= y + _h - oh - 1)
-      cur.y = y + _h - oh - 2;
+      cur.y = y + _h - oh;
   }
 
 public:
@@ -257,6 +258,45 @@ public:
   KeySTM km {};
 
   bool is_x_held = false;
+
+  // int _scrolloff = 4;
+  int _scrolloff = 16;
+  // int _scrolloff = 100000;
+
+
+public:
+
+  static constexpr int   ZOOM     = 4;
+  static constexpr float ZOOM_MIN = 0.1;
+  static constexpr float ZOOM_MAX = 2.0;
+
+  int zoom = 0;
+
+  void zoomIn ()
+  {
+    if (cam.z >= ZOOM_MAX) return;
+    zoom++;
+    updateZoom ();
+  }
+  void zoomOut ()
+  {
+    if (cam.z <= ZOOM_MIN) return;
+    zoom--;
+    updateZoom ();
+  }
+
+private:
+  void updateZoom ()
+  {
+    cam.z = 1.0 + (1.0 / ZOOM) * zoom;
+
+    if (cam.z > ZOOM_MAX)
+      cam.z = ZOOM_MAX; else
+    if (cam.z < ZOOM_MIN)
+      cam.z = ZOOM_MIN;
+
+    keepCursorInFrame ();
+  }
 
 private:
 
