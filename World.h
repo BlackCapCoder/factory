@@ -55,6 +55,7 @@ public:
 
     return res[0];
   }
+  Entity * at (V2 p) { return at (p.x, p.y); }
 
   void inside (int x, int y, int w, int h, std::vector<Entity*> & out)
   {

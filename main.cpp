@@ -96,6 +96,32 @@ int main (int argc, const char * argv[])
         q->opri = (Priority) ((q->opri+1)%3);
     });
 
+
+    // --------- Motion
+
+    g.km.map('n', "w", [&g](){
+      if (auto p = dynamic_cast<Belt*>(g.world.at (g.cur.x, g.cur.y)))
+        while (auto b = dynamic_cast<Belt*>(g.world.at(g.cur + dir2V2(p->dout))))
+        {
+          if (p->dout != dswap(b->din)) break;
+          g.cur += dir2V2 (p->dout);
+          if (p->dout != b->dout) break;
+          p = b;
+        }
+      g.keepCursorInFrame();
+    });
+    g.km.map('n', "<c-w>", [&g](){
+      if (auto p = dynamic_cast<Belt*>(g.world.at (g.cur.x, g.cur.y)))
+        while (auto b = dynamic_cast<Belt*>(g.world.at(g.cur + dir2V2(p->din))))
+        {
+          if (p->din != dswap(b->dout)) break;
+          g.cur += dir2V2 (p->din);
+          if (p->din != b->din) break;
+          p = b;
+        }
+      g.keepCursorInFrame();
+    });
+
     beltInsert (g);
   }
 

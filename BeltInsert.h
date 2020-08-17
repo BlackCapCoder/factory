@@ -423,6 +423,7 @@ void beltInsert (Game & g)
   // g.km.map('i', "u", [](){ BIst->placeUndee     (); });
   g.km.map('i', "g", [](){ BIst->placeUndee     (); });
 
+
   // ----
 
   g.km.map('n', "s",     [&g](){ g.km.setMode('s', 'n'); });
