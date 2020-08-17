@@ -374,6 +374,10 @@ struct BeltInsert
   bool reverse;
   void enter ()
   {
+    if (auto q = g.world.at(g.cur.x, g.cur.y))
+      if (auto b = dynamic_cast<Belt*>(q))
+        face = b->dout;
+
     g.km.setMode('i');
     hasMoved = false;
     reverse  = false;
@@ -381,10 +385,8 @@ struct BeltInsert
   }
   void enterRev ()
   {
-    g.km.setMode('i');
-    hasMoved = false;
-    reverse  = true;
-    initialPosition = V2 { g.cur.x, g.cur.y };
+    enter ();
+    reverse = true;
   }
   void leave ()
   {

@@ -78,7 +78,7 @@ void World::tick (int dt)
 
 void World::render (SDL_Renderer & rend, long time, float cx, float cy, int sw, int sh)
 {
-  V4 sr { cx, cy, (double) sw, (double) sh };
+  V4 sr { cx-1, cy-1, (double) sw+2, (double) sh+2 };
   std::vector<Entity*> v{};
 
   qt.getObjectsInBound (sr, v);
