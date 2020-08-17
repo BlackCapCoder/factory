@@ -13,12 +13,14 @@
 struct BeltInsert
 {
   Game & g;
-  DIR face;
-  bool hasMoved  = false;
-  bool isUnder = false;
+  bool hasMoved = false;
+  bool isUnder  = false;
   Undergroundee * u1 = nullptr;
   DIR udir;
   int udist = 0;
+
+  V2  initialPosition {0,0};
+  DIR face            {DIR::N};
 
   BeltInsert (Game & g) : g {g}
   {}
@@ -39,6 +41,66 @@ struct BeltInsert
     if (!reverse) move (DIR::E); else
     { g.cur.x++; move (DIR::W); g.cur.x++; }
   }
+
+  // ----------- Diagonal movement
+  //
+  // For each diagonal we have two options- for instance
+  // to move north-west we can either move north then west,
+  // or west then north.
+  //
+  // Rules:
+  //   1) Choose the option that leaves 'face' unchanged if there is one.
+  //   2) Choose the option for which the first move is NOT the opposite of 'face'
+
+  void NW () {
+    switch (face)
+    {
+      case (DIR::N):
+      case (DIR::S):
+        left (); up (); break;
+      case (DIR::W):
+      case (DIR::E):
+        up (); left (); break;
+    }
+  }
+
+  void NE () {
+    switch (face)
+    {
+      case (DIR::N):
+      case (DIR::S):
+        right (); up (); break;
+      case (DIR::E):
+      case (DIR::W):
+        up (); right (); break;
+    }
+  }
+
+  void SW () {
+    switch (face)
+    {
+      case (DIR::S):
+      case (DIR::N):
+        left (); down (); break;
+      case (DIR::W):
+      case (DIR::E):
+        down (); left (); break;
+    }
+  }
+
+  void SE () {
+    switch (face)
+    {
+      case (DIR::S):
+      case (DIR::N):
+        right (); down (); break;
+      case (DIR::E):
+      case (DIR::W):
+        down (); right (); break;
+    }
+  }
+
+  // -----------
 
   void placeMiner ()
   {
@@ -231,12 +293,14 @@ struct BeltInsert
     g.km.setMode('i');
     hasMoved = false;
     reverse  = false;
+    initialPosition = V2 { g.cur.x, g.cur.y };
   }
   void enterRev ()
   {
     g.km.setMode('i');
     hasMoved = false;
     reverse  = true;
+    initialPosition = V2 { g.cur.x, g.cur.y };
   }
   void leave ()
   {
@@ -260,11 +324,18 @@ void beltInsert (Game & g)
   g.km.map('i', "k", [](){ BIst->up    (); });
   g.km.map('i', "j", [](){ BIst->down  (); });
 
+  g.km.map('i', "y", [](){ BIst->NW (); });
+  g.km.map('i', "u", [](){ BIst->NE (); });
+  g.km.map('i', "b", [](){ BIst->SW (); });
+  g.km.map('i', "n", [](){ BIst->SE (); });
+
+
   g.km.map('i', "m", [](){ BIst->placeMiner     (); });
   g.km.map('i', "s", [](){ BIst->placeSplitterR (); });
   g.km.map('i', "S", [](){ BIst->placeSplitterL (); });
   g.km.map('i', "t", [](){ BIst->placeTrash     (); });
-  g.km.map('i', "u", [](){ BIst->placeUndee     (); });
+  // g.km.map('i', "u", [](){ BIst->placeUndee     (); });
+  g.km.map('i', "g", [](){ BIst->placeUndee     (); });
 
   // ----
 
@@ -280,6 +351,12 @@ void beltInsert (Game & g)
   g.km.map('S', "j", [&g](){ BIst->placeSplitterL(DIR::S); g.km.setMode('n'); });
   g.km.map('S', "k", [&g](){ BIst->placeSplitterL(DIR::N); g.km.setMode('n'); });
   g.km.map('S', "l", [&g](){ BIst->placeSplitterL(DIR::E); g.km.setMode('n'); });
+
+  g.km.map('n', "gi", [&g](){
+    g.cur.x = BIst->initialPosition.x;
+    g.cur.y = BIst->initialPosition.y;
+    g.keepCursorInFrame();
+  });
 
 }
 

@@ -36,11 +36,21 @@ int main (int argc, const char * argv[])
     g.km.map('n', "k", [&](){ g.cur.y--; g.keepCursorInFrame(); held_x(); });
     g.km.map('n', "j", [&](){ g.cur.y++; g.keepCursorInFrame(); held_x(); });
 
+    g.km.nmap ("y", "kh");
+    g.km.nmap ("u", "kl");
+    g.km.nmap ("b", "jh");
+    g.km.nmap ("n", "jl");
+
     // Camera Movement
     g.km.map('n', "H", [&g](){ g.cam.x--; g.moveCursorIntoFrame(); });
     g.km.map('n', "L", [&g](){ g.cam.x++; g.moveCursorIntoFrame(); });
     g.km.map('n', "K", [&g](){ g.cam.y--; g.moveCursorIntoFrame(); });
     g.km.map('n', "J", [&g](){ g.cam.y++; g.moveCursorIntoFrame(); });
+
+    g.km.nmap ("Y", "KH");
+    g.km.nmap ("U", "KL");
+    g.km.nmap ("B", "JH");
+    g.km.nmap ("N", "JL");
 
     g.km.map('n', "zh", [&g](){ g.scrolloff(g.cur.x, g.cur.y, DIR::W); });
     g.km.map('n', "zl", [&g](){ g.scrolloff(g.cur.x, g.cur.y, DIR::E); });
