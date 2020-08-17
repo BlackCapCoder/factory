@@ -235,7 +235,6 @@ public:
   void keepCursorInFrame ()
   {
     keepInFrame(cur.x, cur.y);
-    std::cout << cam.x << ", " << cam.y << std::endl;
   }
 
   // Move the cursor, bringing it into frame
