@@ -20,8 +20,8 @@ int main (int argc, const char * argv[])
   std::srand(now);
   std::cout << "seed: " << now << std::endl;
 
-  // Mix_Chunk* theme = Mix_LoadWAV("resources/theme.wav");
-  // Mix_PlayChannel (-1, theme, -1);
+  Mix_Chunk* theme = Mix_LoadWAV("resources/theme.wav");
+  Mix_PlayChannel (-1, theme, -1);
 
   Game g {};
 
@@ -158,6 +158,12 @@ int main (int argc, const char * argv[])
       Verb::change (g, Motion::Line);
     });
     g.km.nmap ("C", "c$");
+
+    g.km.map('n', "gg", [&g](){
+      g.cur.x = 0;
+      g.cur.y = 0;
+      g.keepCursorInFrame ();
+    });
 
 
     beltInsert (g);

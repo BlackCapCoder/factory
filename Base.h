@@ -56,7 +56,7 @@ struct Base : Entity
   {
     SDL_Rect r = { 0, 0, size.x, size.y };
     // SDL_SetRenderDrawColor (&rend, 90, 90, 90, 255);
-    SDL_SetRenderDrawColor (&rend, 64, 64, 64, 255);
+    SDL_SetRenderDrawColor (&rend, 16*3, 16*3, 16*3, 255);
     SDL_RenderFillRect (&rend, &r);
 
     static constexpr float s = 0.25;

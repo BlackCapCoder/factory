@@ -84,15 +84,17 @@ public:
       SDL_RenderSetScale    (&rend, 1, 1);
       SDL_RenderSetViewport (&rend, &ws);
 
-      SDL_SetRenderDrawColor (&rend, 0, 0, 0, 255);
+      // SDL_SetRenderDrawColor (&rend, 0, 0, 0, 255);
+      SDL_SetRenderDrawColor (&rend, 16, 16, 16, 255);
       SDL_RenderClear        (&rend);
 
       // World map
       {
         SDL_RenderSetScale(&rend, u * cam.z, u * cam.z);
 
-        SDL_FRect r = { 0, 0, 1, 1 };
-        SDL_SetRenderDrawColor (&rend, 32, 16, 32, 255);
+        static constexpr float size = 0.75;
+
+        SDL_FRect r = { 0, 0, size, size };
 
         const int ox = ceil (cx);
         const int oy = ceil (cy);
@@ -103,15 +105,26 @@ public:
           for (int x = 0; x < sw; x++)
             if (world.m.tile(x+ox,y+oy))
             {
-              r.x = x; r.y = y;
-              world.m.resource(x+ox, y+oy).render (rend, r);
+              if (cam.z >= 0.25)
+              {
+                r.x = x + (1.0-size)/2; r.y = y + (1.0-size)/2;
+                world.m.resource(x+ox, y+oy).render (rend, r);
+              } else
+              {
+                Item itm = world.m.resource (x+ox, y+oy);
+                itm.renderSetColor (rend, itm.quads[0].color);
+
+                r.x = x; r.y = y; r.w = 1.0; r.h = 1.0;
+                SDL_RenderFillRectF (&rend, &r);
+              }
             }
 
         SDL_RenderSetScale(&rend, 1, 1);
       }
 
       // Grid
-      if (cam.z > 1.1)
+      // if (cam.z >= 1.0)
+      if (cam.z >= 0.75)
       {
         // SDL_SetRenderDrawColor (&rend, 255, 255, 255, 20);
         SDL_SetRenderDrawColor (&rend, 40, 40, 40, 255);

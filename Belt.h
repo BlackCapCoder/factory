@@ -71,10 +71,12 @@ public:
   void render (SDL_Renderer & rend, long time) override
   {
     SDL_Rect ur = { 0, 0, 1, 1 };
-    SDL_SetRenderDrawColor (&rend, 16, 16, 16, 255);
+    // SDL_SetRenderDrawColor (&rend, 16, 16, 16, 255);
+    SDL_SetRenderDrawColor (&rend, 8, 8, 8, 255);
     SDL_RenderFillRect (&rend, &ur);
 
-    SDL_SetRenderDrawColor (&rend, 32, 32, 32, 255);
+    // SDL_SetRenderDrawColor (&rend, 32, 32, 32, 255);
+    SDL_SetRenderDrawColor (&rend, 16*3, 16*3, 0, 255);
 
     static constexpr float bw = 0.1;
 
@@ -124,7 +126,8 @@ public:
     // --------------
 
     // SDL_SetRenderDrawColor (&rend, 46, 46, 0, 255);
-    SDL_SetRenderDrawColor (&rend, 46, 46, 46, 255);
+    // SDL_SetRenderDrawColor (&rend, 46, 46, 46, 255);
+    SDL_SetRenderDrawColor (&rend, 16*6, 16*6, 0, 255);
 
     static constexpr float w = 0.1;
 
@@ -229,14 +232,15 @@ public:
     const float a = (float) (cooldown - timeout) / (float) cooldown;
 
     SDL_FRect R;
-    renderCargoEx (rend, 1, false, 0.3, a, R);
+    renderCargoEx (rend, 1, false, 0.5, a, R);
     item.render   (rend, R);
   }
 
   void renderTrack (SDL_Renderer & rend, long time)
   {
     SDL_FRect R;
-    SDL_SetRenderDrawColor (&rend, 16, 16, 16, 255);
+    // SDL_SetRenderDrawColor (&rend, 16, 16, 16, 255);
+    SDL_SetRenderDrawColor (&rend, 8, 8, 8, 255);
     renderCargoEx (rend, 1, true, 0.3, (float)(time%cooldown)/cooldown, R);
     SDL_RenderFillRectF(&rend, &R);
   }
