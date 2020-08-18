@@ -4,6 +4,7 @@
 #include "Belt.h"
 #include "Miner.h"
 #include "Undergroundee.h"
+#include "Rotater.h"
 
 
 void EntityGraph::update ()

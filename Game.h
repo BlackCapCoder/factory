@@ -42,7 +42,6 @@ public:
       | SDL_RENDERER_PRESENTVSYNC
       ) }
   {
-    SDL_SetRenderDrawBlendMode(&rend, SDL_BLENDMODE_BLEND);
   }
 
 public:
@@ -114,7 +113,8 @@ public:
       // Grid
       if (cam.z > 1.1)
       {
-        SDL_SetRenderDrawColor (&rend, 255, 255, 255, 20);
+        // SDL_SetRenderDrawColor (&rend, 255, 255, 255, 20);
+        SDL_SetRenderDrawColor (&rend, 40, 40, 40, 255);
 
         for (float x = 0; x < ws.w; x += u*cam.z)
           SDL_RenderDrawLineF(&rend, x, 0, x, ws.h);
@@ -140,8 +140,10 @@ public:
 
       SDL_RenderSetViewport(&rend, &r);
 
-      SDL_SetRenderDrawColor (&rend, 255, 255, 255, 40);
-      SDL_RenderFillRect     (&rend, &q);
+      SDL_SetRenderDrawBlendMode (&rend, SDL_BLENDMODE_BLEND);
+      SDL_SetRenderDrawColor     (&rend, 255, 255, 255, 40);
+      SDL_RenderFillRect         (&rend, &q);
+      SDL_SetRenderDrawBlendMode (&rend, SDL_BLENDMODE_NONE);
     }
   }
 

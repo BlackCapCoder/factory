@@ -8,6 +8,7 @@
 #include "Splitter.h"
 #include "Trash.h"
 #include "Undergroundee.h"
+#include "Rotater.h"
 
 
 struct BeltInsert
@@ -255,6 +256,12 @@ struct BeltInsert
     g.world.cleanAdd(u2);
   }
 
+  void placeRotater ()
+  {
+    auto e = new Rotater { g.cur.x, g.cur.y, face };
+    g.world.cleanAdd (e);
+  }
+
   void placeBelt (int x, int y, DIR d1, DIR d2)
   {
     if (d1 == d2)
@@ -422,6 +429,8 @@ void beltInsert (Game & g)
   g.km.map('i', "t", [](){ BIst->placeTrash     (); });
   // g.km.map('i', "u", [](){ BIst->placeUndee     (); });
   g.km.map('i', "g", [](){ BIst->placeUndee     (); });
+
+  g.km.map('i', "r", [](){ BIst->placeRotater   (); });
 
 
   // ----

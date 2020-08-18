@@ -2,9 +2,12 @@
 #include "BeltInsert.h"
 #include "Miner.h"
 #include "Base.h"
+#include "Rotater.h"
 #include "motion.h"
+
 #include <random>
 #include <SDL2/SDL_mixer.h>
+
 
 int main (int argc, const char * argv[])
 {
@@ -17,8 +20,8 @@ int main (int argc, const char * argv[])
   std::srand(now);
   std::cout << "seed: " << now << std::endl;
 
-  Mix_Chunk* theme = Mix_LoadWAV("resources/theme.wav");
-  Mix_PlayChannel (-1, theme, -1);
+  // Mix_Chunk* theme = Mix_LoadWAV("resources/theme.wav");
+  // Mix_PlayChannel (-1, theme, -1);
 
   Game g {};
 
@@ -106,7 +109,6 @@ int main (int argc, const char * argv[])
 
 
     // --------- Motion
-
 
     g.km.map('n', "w", [&g](){
       Verb::warp (g, Motion::Word);

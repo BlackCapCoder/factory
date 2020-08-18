@@ -1,10 +1,9 @@
-- visual mode
-- yank/paste/registers
 
 - machines
 - longer undergroundee variants- should be weaveable
 - belt lanes
 - graphics work
+- switch to opengl
 
 
 # Bugs
@@ -15,3 +14,18 @@
   it has been given an item.
   It incorrectly assumes that it must have had the item since
   the last frame, moving it slightly.
+
+
+# Vim
+
+- visual mode
+- ex mode
+- proper operator pending mode
+- yank/paste/registers
+- windows
+- counts "3dw"
+- marks
+- jumplist
+- text objects (dip, dib ...)
+- undo history
+- .

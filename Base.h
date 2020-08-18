@@ -28,12 +28,20 @@ struct Base : Entity
 
   Order getOrder ()
   {
+    const Item fancy
+      { Quad { Color::Green, Shape::Star }
+      , Quad { Color::Blue,  Shape::Star }
+      , Quad { Color::Green, Shape::Star }
+      , Quad { Color::Blue,  Shape::Circle }
+      };
+
     switch (level)
     {
-      case 0:  return Order { Item {Gray},  200     };
-      case 1:  return Order { Item {Red},   500     };
-      case 2:  return Order { Item {Blue},  1000    };
-      default: return Order { Item {Gray},  10*1000 };
+      case 0:  return Order { Item { Gray, Shape::Square },  200    };
+      // case 0:  return Order { fancy, 200     };
+      case 1:  return Order { Item { Red,  Shape::Square }, 500     };
+      case 2:  return Order { Item { Blue, Shape::Square }, 1000    };
+      default: return Order { Item { Gray, Shape::Square }, 10*1000 };
     }
   }
 
