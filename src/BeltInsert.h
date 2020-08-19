@@ -9,6 +9,7 @@
 #include "Trash.h"
 #include "Undergroundee.h"
 #include "Rotater.h"
+#include "BeltBrush.h"
 
 
 struct BeltInsert
@@ -264,8 +265,13 @@ struct BeltInsert
 
   void placeBelt (int x, int y, DIR d1, DIR d2);
   void move (DIR d);
+  void blockMove (DIR d);
+  void undeeMove (DIR d);
+
+  void placeBeltEx (int x, int y, DIR d1, DIR d2);
 
   bool reverse;
+  bool isBlock = false;
   void enter ()
   {
     if (auto q = g.world.at(g.cur.x, g.cur.y))
@@ -275,6 +281,7 @@ struct BeltInsert
     g.km.setMode('i');
     hasMoved = false;
     reverse  = false;
+    isBlock  = false;
     initialPosition = V2 { g.cur.x, g.cur.y };
   }
   void enterRev ()
@@ -282,11 +289,17 @@ struct BeltInsert
     enter ();
     reverse = true;
   }
+  void enterBlock ()
+  {
+    enter ();
+    isBlock = true;
+  }
   void leave ()
   {
     g.km.setMode('n');
     isUnder = false;
     reverse = false;
+    isBlock = false;
   }
 };
 

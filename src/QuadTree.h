@@ -184,7 +184,7 @@ public:
   }
 
   // Searches quadtree for objects within the provided boundary and returns them in vector
-  void getObjectsInBound (const V4 & bound, std::vector<ColT*> & foundObjects)
+  void getObjectsInBound (const V4 & bound, std::vector<ColT*> & foundObjects) const
   {
     for (const auto &obj : objects) {
       // Only check for intersection with OTHER boundaries

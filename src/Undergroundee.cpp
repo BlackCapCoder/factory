@@ -5,44 +5,38 @@
 
 void Undergroundee::render (SDL_Renderer & rend, long time)
 {
-  SDL_FRect r = { 0, 0, 1, 1 };
-
-
   // ----------- Background
 
   static constexpr float k = 0.14; // slope
 
-  SDL_SetRenderDrawColor (&rend, 64, 64, 16, 255);
+  SDL_SetRenderDrawColor (&rend, 16*5, 16*5, 16*1, 255);
 
-  float sx, sy;
-  SDL_RenderGetScale (&rend, &sx, &sy);
-  SDL_RenderSetScale (&rend, 1.0, 1.0);
+  SDL_FRect r = { 0, 0, 1, 1 };
 
   switch (!entrance ? dir : dswap (dir))
   {
     case (DIR::E):
-      filledTrigonRGBA (&rend, sx, 0,        0, k*sy,     sx, k*sy, 64, 64, 16, 255);
-      filledTrigonRGBA (&rend, 0, sy*(1-k), sx, sy*(1-k), sx,   sy, 64, 64, 16, 255);
+      renderFillTrigon (rend, 1,   0, 0,   k, 1, k);
+      renderFillTrigon (rend, 0, 1-k, 1, 1-k, 1, 1);
       r.x = 0; r.y = k; r.w = 1; r.h = 1-k*2;
       break;
     case (DIR::W):
-      filledTrigonRGBA (&rend, 0,0,        sx,sy*k,     0,sy*k, 64, 64, 16, 255);
-      filledTrigonRGBA (&rend, 0,sy*(1-k), sx,sy*(1-k), 0,sy,   64, 64, 16, 255);
+      renderFillTrigon (rend, 0,0,1,k,0,k);
+      renderFillTrigon (rend, 0,1-k,1,1-k,0,1);
       r.x = 0; r.y = k; r.w = 1; r.h = 1-k*2;
       break;
     case (DIR::N):
-      filledTrigonRGBA (&rend, 0 , 0, k*sx,     0, k*sx,     sy, 64, 64, 16, 255);
-      filledTrigonRGBA (&rend, sx, 0, sx*(1-k), 0, sx*(1-k), sy, 64, 64, 16, 255);
+      renderFillTrigon (rend, 0,0,k,0,k,1);
+      renderFillTrigon (rend, 1,0,1-k,0,1-k,1);
       r.x = k; r.y = 0; r.w = 1-k*2; r.h = 1;
       break;
     case (DIR::S):
-      filledTrigonRGBA (&rend, 0,sy, k*sx,sy, k*sx,0, 64, 64, 16, 255);
-      filledTrigonRGBA (&rend, sx,sy, sx*(1-k),sy, sx*(1-k),0, 64, 64, 16, 255);
+      renderFillTrigon (rend, 0,1,k,1,k,0);
+      renderFillTrigon (rend, 1,1,1-k,1,1-k,0);
       r.x = k; r.y = 0; r.w = 1-k*2; r.h = 1;
       break;
   }
 
-  SDL_RenderSetScale  (&rend, sx, sy);
   SDL_RenderFillRectF (&rend, &r);
 
 

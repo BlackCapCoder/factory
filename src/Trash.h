@@ -15,12 +15,8 @@ struct Trash : public Entity
   {
   }
 
-  void render (SDL_Renderer & rend, long time) override
-  {
-    SDL_Rect r = { 0, 0, 1, 1 };
-    SDL_SetRenderDrawColor (&rend, 128, 0, 0, 255);
-    SDL_RenderFillRect (&rend, &r);
-  }
+  void render (SDL_Renderer & rend, long time) override;
+
   bool input (Item) override { return true; }
 };
 

@@ -34,12 +34,8 @@ struct Rotater : public Entity
     }
   }
 
-  void render (SDL_Renderer & rend, long time) override
-  {
-    SDL_Rect r = { 0, 0, 1, 1 };
-    SDL_SetRenderDrawColor (&rend, 64, 128, 128, 255);
-    SDL_RenderFillRect (&rend, &r);
-  }
+  void render (SDL_Renderer & rend, long time) override;
+
   bool input (Item i) override
   {
     if (hasItem) return false;

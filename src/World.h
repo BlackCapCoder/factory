@@ -47,7 +47,7 @@ public:
   void remove (Belt          *);
   void remove (Undergroundee *);
 
-  Entity * at (int x, int y)
+  Entity * at (int x, int y) const
   {
     std::vector<Entity*> res;
     qt.getObjectsInBound(V4 { (double) x + 0.5, (double) y + 0.5, 0.1, 0.1}, res);
