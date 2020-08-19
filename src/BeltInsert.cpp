@@ -55,7 +55,7 @@ void BeltInsert::move (DIR d)
 {
   if (isBlock)
   {
-    blockMove (d);
+    blockMove (d, blockSize);
     return;
   }
 
@@ -173,7 +173,7 @@ void BeltInsert::move (DIR d)
 }
 
 
-void BeltInsert::blockMove (DIR d)
+void BeltInsert::blockMove (DIR d, const int n)
 {
   DIR d1 = face;
   DIR d2 = d;
@@ -202,8 +202,6 @@ void BeltInsert::blockMove (DIR d)
 
   // --------
 
-  static constexpr int n = 7;
-
 
   if (d1 == dswap (d2)) // opposite
   {
@@ -211,24 +209,28 @@ void BeltInsert::blockMove (DIR d)
   }
   else if (d1 == d2)  // straight
   {
-    V2 ps[n] { pos, pos, pos };
-
-    static constexpr int k = n/2;
+    const int k = n/2;
 
     for (int i = 0; i < n; ++i)
     {
       V2 p = pos;
 
       if (d2 == DIR::E || d2 == DIR::W )
+      {
         p.y += i-k;
+        if (d2 == DIR::E) p.x += k; else p.x -= k;
+      }
       else
+      {
         p.x += i-k;
+        if (d2 == DIR::S) p.y += k; else p.y -= k;
+      }
+
 
       BeltBrush bb
         { g.world, p };
 
-      for (int j = 0; j <= k; ++j)
-        bb.move (d2);
+      bb.move (d2);
     }
 
 
@@ -265,7 +267,7 @@ void BeltInsert::blockMove (DIR d)
 
     // ----
 
-    static constexpr int k = n/2;
+    const int k = n/2;
 
     for (int i = 0; i < n; ++i)
     {
@@ -310,7 +312,9 @@ void beltInsert (Game & g)
 
   g.km.map('n', "i",     [](){ BIst->enter (); });
   g.km.map('n', "I",     [](){ BIst->enterRev (); });
+  g.km.map('n', "<c-i>", [](){ BIst->enterBlock (); });
   g.km.map('i', "<esc>", [](){ BIst->leave (); });
+
 
   g.km.map('i', "h", [](){ BIst->left  (); });
   g.km.map('i', "l", [](){ BIst->right (); });
@@ -332,6 +336,8 @@ void beltInsert (Game & g)
 
   g.km.map('i', "r", [](){ BIst->placeRotater   (); });
 
+  g.km.map('i', "+", [](){ BIst->incBlock(); });
+  g.km.map('i', "-", [](){ BIst->decBlock(); });
 
   // ----
 
@@ -352,10 +358,6 @@ void beltInsert (Game & g)
     g.cur.x = BIst->initialPosition.x;
     g.cur.y = BIst->initialPosition.y;
     g.keepCursorInFrame();
-  });
-
-  g.km.map('n', "<c-i>", [&g](){
-      BIst->enterBlock ();
   });
 
 }

@@ -26,6 +26,10 @@ V2 V2::operator - (const V2 other)
 {
   return V2 { x - other.x, y - other.y };
 }
+V2 V2::operator * (const V2 other)
+{
+  return V2 { x * other.x, y * other.y };
+}
 
 void V2::operator += (const V2 other)
 {
@@ -37,3 +41,9 @@ void V2::operator -= (const V2 other)
   x -= other.x;
   y -= other.y;
 }
+void V2::operator *= (const V2 other)
+{
+  x *= other.x;
+  y *= other.y;
+}
+

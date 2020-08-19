@@ -23,6 +23,8 @@ struct BeltInsert
 
   V2  initialPosition {0,0};
   DIR face            {DIR::N};
+  int blockSize = 1;
+
 
   BeltInsert (Game & g) : g {g}
   {}
@@ -265,7 +267,7 @@ struct BeltInsert
 
   void placeBelt (int x, int y, DIR d1, DIR d2);
   void move (DIR d);
-  void blockMove (DIR d);
+  void blockMove (DIR d, const int n);
   void undeeMove (DIR d);
 
   void placeBeltEx (int x, int y, DIR d1, DIR d2);
@@ -293,6 +295,8 @@ struct BeltInsert
   {
     enter ();
     isBlock = true;
+    if (blockSize < 3)
+      blockSize = 3;
   }
   void leave ()
   {
@@ -301,6 +305,20 @@ struct BeltInsert
     reverse = false;
     isBlock = false;
   }
+
+  void incBlock () {
+    blockSize += 2;
+    isBlock = true;
+  }
+  void decBlock () {
+    blockSize -= 2;
+
+    if (blockSize <= 1) {
+      blockSize = 1;
+      isBlock = false;
+    }
+  }
+
 };
 
 void beltInsert (Game & g);

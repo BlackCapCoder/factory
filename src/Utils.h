@@ -19,9 +19,11 @@ struct V2
 
   V2 operator + (const V2) const;
   V2 operator - (const V2);
+  V2 operator * (const V2);
 
   void operator += (const V2 other);
   void operator -= (const V2 other);
+  void operator *= (const V2 other);
 };
 
 #define dswap(d) ((DIR) ((d+2) & 3))
