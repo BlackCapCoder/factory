@@ -45,9 +45,9 @@ public:
   }
 
 public:
-  Camera     cam { 0, 0, 1 };
-  V2         cur { 0, 0 };
-  World      world {};
+  Camera     cam   { 0, 0, 1 };
+  V2         cur   { 0, 0 };
+  World      world { new Base (0, 0) };
 
   SDL_Rect ws {};
   bool quit  = false;

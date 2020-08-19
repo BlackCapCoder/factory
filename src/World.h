@@ -26,11 +26,11 @@ struct World
   WorldMap                 m  {};
   QuadTree<Entity>         qt {V4{-1024,-1024,2048,2048},30,20};
 
-  // World (Base * b)
-  // {
-  //   base = b;
-    // qt.insert(reinterpret_cast<Entity*>(b));
-  // }
+  World (Base * b)
+  {
+    base = b;
+    qt.insert(reinterpret_cast<Entity*>(b));
+  }
 
 
 public:

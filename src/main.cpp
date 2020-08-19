@@ -170,9 +170,6 @@ int main (int argc, const char * argv[])
     beltInsert (g);
   }
 
-  g.world.base = new Base (0, 0);
-  g.world.qt.insert(g.world.base);
-
   g.km.setMode('n');
   // g.km.put(Key('z', Key::MOD_CHAR));
   // g.km.debug();
