@@ -81,6 +81,15 @@ DONE:
       if (y > 0) pbuf [i - u] = val;
       if (y < u) pbuf [i + u] = val;
     }
+
+    for (int y = 0; y < u; ++y)
+    for (int x = 0; x < u; ++x)
+    {
+      const int i = y*u + x;
+
+      if (bs [i]) continue;
+      pbuf [i] = 0;
+    }
   }
 
   bool tile (int x, int y)
@@ -92,6 +101,18 @@ DONE:
     if (x < 0 || y < 0 || x >= w || y >= w) return false;
     return bit (x, y);
   }
+  bool rtile (int x, int y)
+  {
+    static constexpr int q = w>>1;
+    static constexpr int u = w/rsize;
+
+    x = (x+q)%w; y = (y+q)%w;
+    if (x < 0) x = w - x;
+    if (y < 0) y = w - y;
+
+    return pbuf[(y/rsize)*u + x/rsize] != 0;
+  }
+
   Item resource (int x, int y)
   {
     static constexpr int q = w>>1;

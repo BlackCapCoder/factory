@@ -115,9 +115,39 @@ public:
                 itm.renderSetColor (rend, itm.quads[0].color);
 
                 r.x = x; r.y = y; r.w = 1.0; r.h = 1.0;
-                SDL_RenderFillRectF (&rend, &r);
+                // SDL_RenderFillRectF (&rend, &r);
               }
             }
+
+        if (cam.z < 0.25)
+        {
+          SDL_SetRenderDrawColor (&rend, 255, 255, 255, 255);
+
+          const int u = world.m.rsize;
+          static constexpr float size = 0.5;
+
+          int offX = (int) ox % u; if (offX < 0) offX += u;
+          int offY = (int) oy % u; if (offY < 0) offY += u;
+
+          for (int y = 0; y < sh; y += u)
+          {
+            for (int x = 0; x < sw; x += u)
+            {
+              if (world.m.rtile(x+ox,y+oy))
+              {
+                r.x = x + u*(1-size)/2;
+                r.y = y + u*(1-size)/2;
+                r.w = u*size;
+                r.h = u*size;
+
+                r.x -= offX;
+                r.y -= offY;
+
+                world.m.resource(x+ox, y+oy).render (rend, r);
+              }
+            }
+          }
+        }
 
         SDL_RenderSetScale(&rend, 1, 1);
       }

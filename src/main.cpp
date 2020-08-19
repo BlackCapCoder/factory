@@ -3,7 +3,7 @@
 #include "Miner.h"
 #include "Base.h"
 #include "Rotater.h"
-#include "motion.h"
+#include "Motion.h"
 
 #include <random>
 #include <SDL2/SDL_mixer.h>
@@ -81,10 +81,10 @@ int main (int argc, const char * argv[])
     g.km.map('n', "+", [&g](){ g.zoomIn  (); });
 
     g.km.map('n', "gz", [&g](){
-      if (g.cam.z > g.ZOOM_MIN)
-        g.zoomEnd ();
-      else
+      if (g.cam.z != 1.0)
         g.zoomReset ();
+      else
+        g.zoomEnd ();
     });
 
     // Centering
@@ -162,7 +162,8 @@ int main (int argc, const char * argv[])
     g.km.map('n', "gg", [&g](){
       g.cur.x = 0;
       g.cur.y = 0;
-      g.keepCursorInFrame ();
+      g.cam.x = 0;
+      g.cam.y = 0;
     });
 
 
