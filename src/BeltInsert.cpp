@@ -53,9 +53,9 @@ void BeltInsert::undeeMove (DIR d)
 
 void BeltInsert::move (DIR d)
 {
-  if (isBlock)
+  if (g.cursorSize > 1)
   {
-    blockMove (d, blockSize);
+    blockMove (d, g.cursorSize);
     return;
   }
 
@@ -180,25 +180,28 @@ void BeltInsert::blockMove (DIR d, const int n)
 
   V2 pos { g.cur.x, g.cur.y };
 
+  // if (auto e = g.world.at (pos))
+  // {
+  //   if (auto b = dynamic_cast<Belt*>(e))
+  //   {
+  //     d1 = b->dout;
+  //   }
+  //   else
+  //   {
+  //     d1 = d2;
+  //   }
+  // }
+  // else
+  // {
+  //   d1 = d2;
+  // }
+
+  if (!hasMoved)
+    d1 = d2;
+
   g.cur   += dir2V2 (d);
   hasMoved = true;
   face     = d;
-
-  if (auto e = g.world.at (pos))
-  {
-    if (auto b = dynamic_cast<Belt*>(e))
-    {
-      d1 = b->dout;
-    }
-    else
-    {
-      d1 = d2;
-    }
-  }
-  else
-  {
-    d1 = d2;
-  }
 
   // --------
 
@@ -211,28 +214,35 @@ void BeltInsert::blockMove (DIR d, const int n)
   {
     const int k = n/2;
 
+
     for (int i = 0; i < n; ++i)
     {
       V2 p = pos;
 
-      if (d2 == DIR::E || d2 == DIR::W )
+      switch (d2)
       {
-        p.y += i-k;
-        if (d2 == DIR::E) p.x += k; else p.x -= k;
-      }
-      else
-      {
-        p.x += i-k;
-        if (d2 == DIR::S) p.y += k; else p.y -= k;
-      }
+        case DIR::N:
+          p.x += i;
+          break;
+        case DIR::W:
+          p.y += i;
+          break;
 
+        case DIR::S:
+          p.x += i;
+          p.y += n-1;
+          break;
+        case DIR::E:
+          p.y += i;
+          p.x += n-1;
+          break;
+      }
 
       BeltBrush bb
         { g.world, p };
 
       bb.move (d2);
     }
-
 
     return;
   }
@@ -267,15 +277,15 @@ void BeltInsert::blockMove (DIR d, const int n)
 
     // ----
 
-    const int k = n/2;
+    const int k = n-1;
 
     for (int i = 0; i < n; ++i)
     {
       const V2 p =
-        pos + V2 { diag ? i - k : k - i, i - k };
+        pos + V2 { diag ? i : k - i, i };
 
       const int x =
-        vertical ? n - 1 - i : i;
+        vertical ? k - i : i;
 
       BeltBrush bb
         { g.world , p };
@@ -312,7 +322,7 @@ void beltInsert (Game & g)
 
   g.km.map('n', "i",     [](){ BIst->enter (); });
   g.km.map('n', "I",     [](){ BIst->enterRev (); });
-  g.km.map('n', "<c-i>", [](){ BIst->enterBlock (); });
+  // g.km.map('n', "<c-i>", [](){ BIst->enterBlock (); });
   g.km.map('i', "<esc>", [](){ BIst->leave (); });
 
 

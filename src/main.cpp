@@ -4,6 +4,7 @@
 #include "Base.h"
 #include "Rotater.h"
 #include "Motion.h"
+#include "Balance.h"
 
 #include <random>
 #include <SDL2/SDL_mixer.h>
@@ -93,12 +94,32 @@ int main (int argc, const char * argv[])
       g.cam.y = g.cur.y;
     });
 
+
+    // Cursor
+    g.km.map ('n', "<UP>", [&g](){
+      g.cursorSize++;
+    });
+    g.km.map ('n', "<DOWN>", [&g](){
+      g.cursorSize--;
+      if (g.cursorSize <= 0)
+        g.cursorSize = 1;
+    });
+
     // -------- Editing
 
     // Delete under cursor
-    g.km.map('n', "x", [&g](){
-      if (auto q = g.world.at (g.cur.x, g.cur.y); q != nullptr)
-        g.world.remove(q);
+    g.km.map('n', "x", [&g]()
+    {
+      std::vector<Entity*> es {};
+      g.world.inside
+        ( g.cur.x
+        , g.cur.y
+        , g.cursorSize
+        , g.cursorSize
+        , es);
+
+      for (auto e : es)
+        g.world.remove (e);
     });
 
     // Toggle splitter priority
@@ -164,6 +185,14 @@ int main (int argc, const char * argv[])
       g.cur.y = 0;
       g.cam.x = 0;
       g.cam.y = 0;
+    });
+
+
+    // ----- Balance
+
+    g.km.map('n', "y", [&g](){
+      std::string str = Balancers::serialize (g.world, g.cur.x, g.cur.y, g.cursorSize, g.cursorSize);
+      std::cout << str << std::endl;
     });
 
 

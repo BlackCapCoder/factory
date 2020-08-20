@@ -92,12 +92,12 @@ bool parseKeys (std::string str, std::vector<Key> & ks)
     {
       parseKeys (word, ks);
     }
-    else if (word.size() == 2 && j == left-1)
-    {
-      ks.push_back (Key ('<'));
-      i = j;
-      continue;
-    }
+    // else if (word.size() == 2 && j == left-1)
+    // {
+    //   ks.push_back (Key ('<'));
+    //   i = j;
+    //   continue;
+    // }
     else
     {
       for (int k = 0; k < word.size(); ++k)

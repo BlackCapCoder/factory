@@ -23,7 +23,6 @@ struct BeltInsert
 
   V2  initialPosition {0,0};
   DIR face            {DIR::N};
-  int blockSize = 1;
 
 
   BeltInsert (Game & g) : g {g}
@@ -273,7 +272,6 @@ struct BeltInsert
   void placeBeltEx (int x, int y, DIR d1, DIR d2);
 
   bool reverse;
-  bool isBlock = false;
   void enter ()
   {
     if (auto q = g.world.at(g.cur.x, g.cur.y))
@@ -283,7 +281,6 @@ struct BeltInsert
     g.km.setMode('i');
     hasMoved = false;
     reverse  = false;
-    isBlock  = false;
     initialPosition = V2 { g.cur.x, g.cur.y };
   }
   void enterRev ()
@@ -291,31 +288,21 @@ struct BeltInsert
     enter ();
     reverse = true;
   }
-  void enterBlock ()
-  {
-    enter ();
-    isBlock = true;
-    if (blockSize < 3)
-      blockSize = 3;
-  }
   void leave ()
   {
     g.km.setMode('n');
     isUnder = false;
     reverse = false;
-    isBlock = false;
   }
 
   void incBlock () {
-    blockSize += 2;
-    isBlock = true;
+    g.cursorSize += 2;
   }
   void decBlock () {
-    blockSize -= 2;
+    g.cursorSize -= 2;
 
-    if (blockSize <= 1) {
-      blockSize = 1;
-      isBlock = false;
+    if (g.cursorSize <= 1) {
+      g.cursorSize = 1;
     }
   }
 

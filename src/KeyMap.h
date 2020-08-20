@@ -21,6 +21,10 @@ struct KeyMap : std::map <Mode, SubMap>
     std::vector<Key> ks {};
     parseKeys (keys, ks);
 
+    // std::cout << keys << "\t" << ks.size() << std::endl;
+    // for (auto k : ks)
+    //   std::cout << "  " << k.toString() << std::endl;
+
     SubMap * m = &(*this)[mode];
 
     int i = 0;
@@ -32,7 +36,6 @@ struct KeyMap : std::map <Mode, SubMap>
     }
 
     (*m)[ks[i].toUL()] = { f };
-    // std::cout << keys << ": " << m << std::endl;
 
     return true;
   }
